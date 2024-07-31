@@ -2,13 +2,19 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 # Create your views here.
 from .forms import ReviewForm
+from .models import Review
 def review(request):
 
     if request.method == "POST":
         form = ReviewForm(request.POST)
 
         if form.is_valid(): # is valid is coming from the Form class we are inheriting from and it will check that user inputed data is valid. 
-            print(form.cleaned_data) # cleaned_data is a field that contains all of our validated data automatically. This is a field that exists on the form class were inheriting from.
+            review = Review(
+                user_name=form.cleaned_data['user_name'], 
+                review_text=form.cleaned_data['review_text'],
+                rating=form.cleaned_data['rating']) # we are essentially transporting the data from the form into the model,
+            review.save()
+            #print(form.cleaned_data) # cleaned_data is a field that contains all of our validated data automatically. This is a field that exists on the form class were inheriting from.
             return HttpResponseRedirect("/thank-you")
     else:
         form = ReviewForm()
