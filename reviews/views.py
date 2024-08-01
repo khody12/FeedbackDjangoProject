@@ -5,7 +5,9 @@ from django.http import HttpResponseRedirect
 from .forms import ReviewForm
 from django.views import View
 from django.views.generic.base import TemplateView # view that can be extended that is more specific and focused to build view classes that render templates. 
+from django.views.generic import ListView, DetailView
 from .models import Review
+
 
 class ReviewView(View): #
     def get(self,request):
@@ -31,25 +33,26 @@ class thank_you(TemplateView):
         context['message'] = "This works!"
         return context
 
-class ReviewsListView(TemplateView):
+class ReviewsListView(ListView):
     template_name = "reviews/review_list.html"
+    model = Review
+    context_object_name = "reviews" #within our for loop in the html, by default it is object_list, but we can simply change it here so that it is more readable within html.
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        reviews = Review.objects.all()
-        context['reviews'] = reviews
-        return context
-class SingleReviewView(TemplateView):
+    def get_queryset(self):
+        base_query = super().get_queryset()
+        data = base_query.filter(rating__gt=4) # django will automatically supply the correct set of the data once this is returned via the get_queryset function.
+        return data
+
+    #by default, django will now take all the data that is associated with review, and pass it to that html, THATS LITERALLY IT! 
+
+    
+class SingleReviewView(DetailView):
     template_name = "reviews/single_review.html"
+    model = Review # this works out of the box, despite the fact we have review in our html, django automatically takes whatever object it finds via the pk that we specified in urls.py, takes whatever we named our model,
+    #make it lowercase, and then looks inside of the html and it works, despite the fact we never passed in any specific context to make that work.
+    #using object within the html will also work. So object.rating will work just like review.rating. 
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        review_id = kwargs["id"] # this id is coming from urls.py where we have  <> indicating a dynamic url. This id is in kwargs because we have it there as a parameter in our urls.py
-        SelectedReview = Review.objects.get(pk=review_id) # pk is primary key, and its the unique identifier for each record that is in our SQL database. it is automatically assigned and we are retrieving it here by taking 
-        # in the variable number in our url, that is put into kwargs, review_id accesses kwargs id value, and then finally we use that to get the specific review object from our database and then pass to that our template. 
-        context['review'] = SelectedReview
-
-        return context
+    
 
 
 

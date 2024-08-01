@@ -3,7 +3,7 @@
 {% block title %} Review Detail {% endblock %}
 
 {% block content %}
-  <h1>{{review.user_name}}</h1>
+  <h1>{{review.user_name}}</h1> <!--this could also be named object.user_name because we are using the DetailView class extension. the name of the object is automatically extrapolated by django as we set model = review-->
   <p>Rating: {{review.rating}} </p>
   <p>{{review.review_text}}</p>
 {% endblock %}
