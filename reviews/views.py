@@ -39,6 +39,18 @@ class ReviewsListView(TemplateView):
         reviews = Review.objects.all()
         context['reviews'] = reviews
         return context
+class SingleReviewView(TemplateView):
+    template_name = "reviews/single_review.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        review_id = kwargs["id"] # this id is coming from urls.py where we have  <> indicating a dynamic url. This id is in kwargs because we have it there as a parameter in our urls.py
+        SelectedReview = Review.objects.get(pk=review_id) # pk is primary key, and its the unique identifier for each record that is in our SQL database. it is automatically assigned and we are retrieving it here by taking 
+        # in the variable number in our url, that is put into kwargs, review_id accesses kwargs id value, and then finally we use that to get the specific review object from our database and then pass to that our template. 
+        context['review'] = SelectedReview
+
+        return context
+
 
 
 # def review(request):
