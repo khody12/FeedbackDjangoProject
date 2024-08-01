@@ -1,14 +1,8 @@
-{% load static %}
+{% extends "reviews/base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static "reviews/styles.css" %}">
-</head>
-<body>
+{% block title %} Your review {% endblock %}
+    
+{% block content %}
     <form action="/" method="POST"> <!--This will now send a post request rather than a get request.-->
         {% csrf_token %}
         {%for field in form%}
@@ -22,8 +16,8 @@
        
         <button type="submit">Send</button>
     </form>
-</body>
-</html>
+{% endblock %}
+
 
 
 
