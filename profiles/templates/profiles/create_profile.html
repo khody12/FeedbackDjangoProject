@@ -9,8 +9,9 @@
   <link rel="stylesheet" href="{% static "profiles/styles.css" %}">
 </head>
 <body>
-  <form action="/profiles:" method="POST" enctype="multipart/form-data"> <!--enctype is standard html and it tells the browser that this form, when submitted, will contain a file.-->
-    <input type="file" name="image" />
+  <form action="/profiles/" method="POST" enctype="multipart/form-data"> <!--enctype is standard html and it tells the browser that this form, when submitted, will contain a file.-->
+    {% csrf_token %}
+    {{ form }}
     <button>Upload!</button>
   </form>
 </body>
