@@ -15,7 +15,8 @@ class ReviewView(CreateView): #create view allows us to not even have to create 
     model = Review 
     form_class = ReviewForm
     template_name = "reviews/review.html"
-    success_url ="/thank-you" # out of the book, form view doesnt know what to do with submit data, we have to add in the code to write data into the database via form_valid
+    success_url ="/thank-you" 
+    # out of the book, form view doesnt know what to do with submit data, we have to add in the code to write data into the database via form_valid
 
     # def form_valid(self, form): # THIS CODE IS NOT NECESSARY IF WE ARE DOING CREATE VIEW INSTEAD OF FORM VIEW. FORM VIEW REQUIRES CUSTOM SAVING, WHILE CREATE VIEW WILL DO IT FOR US.
     #     form.save()

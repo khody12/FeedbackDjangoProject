@@ -20,7 +20,7 @@ class CreateProfileView(View):
         })
 
     def post(self, request):
-        submitted_form = ProfileForm(request.POST, request.FILES)
+        submitted_form = ProfileForm(request.POST, request.FILES) # request.POST contains form data, while request.FILES contains any uploaded files.
         if submitted_form.is_valid():
             profile = UserProfile(image=request.FILES['user_image'])
             profile.save()
