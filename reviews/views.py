@@ -6,24 +6,36 @@ from .forms import ReviewForm
 from django.views import View
 from django.views.generic.base import TemplateView # view that can be extended that is more specific and focused to build view classes that render templates. 
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView
 from .models import Review
 
 
-class ReviewView(View): #
-    def get(self,request):
-        form = ReviewForm()
+class ReviewView(CreateView): #create view allows us to not even have to create a form within forms.py, it will be automatically inferred by our fields variable. but it cant do custom labels or error messages
+    # if we want to have custom labels, we need to set form_class and we still need to have custom forms.py. But create view will allow us not to have to right save() code. 
+    model = Review 
+    form_class = ReviewForm
+    template_name = "reviews/review.html"
+    success_url ="/thank-you" # out of the book, form view doesnt know what to do with submit data, we have to add in the code to write data into the database via form_valid
 
-        return render(request, "reviews/review.html",{
-        "form":form
-        })
+    # def form_valid(self, form): # THIS CODE IS NOT NECESSARY IF WE ARE DOING CREATE VIEW INSTEAD OF FORM VIEW. FORM VIEW REQUIRES CUSTOM SAVING, WHILE CREATE VIEW WILL DO IT FOR US.
+    #     form.save()
+    #     return super().form_valid(form)
 
-    def post(self,request):
-        form = ReviewForm(request.POST)
 
-        if form.is_valid(): # is valid is coming from the Form class we are inheriting from and it will check that user inputed data is valid. 
-            form.save()
-            #print(form.cleaned_data) # cleaned_data is a field that contains all of our validated data automatically. This is a field that exists on the form class were inheriting from.
-            return HttpResponseRedirect("/thank-you")
+    # def get(self,request):
+    #     form = ReviewForm()
+
+    #     return render(request, "reviews/review.html",{
+    #     "form":form
+    #     })
+
+    # def post(self,request):
+    #     form = ReviewForm(request.POST)
+
+    #     if form.is_valid(): # is valid is coming from the Form class we are inheriting from and it will check that user inputed data is valid. 
+    #         form.save()
+    #         #print(form.cleaned_data) # cleaned_data is a field that contains all of our validated data automatically. This is a field that exists on the form class were inheriting from.
+    #         return HttpResponseRedirect("/thank-you")
 
 class thank_you(TemplateView):
     template_name = "reviews/thank_you.html" # this is an expected property name, not some variable simply defined by me. itll automatically take this template and return and render if a get request reaches this view.
@@ -40,7 +52,7 @@ class ReviewsListView(ListView):
 
     def get_queryset(self):
         base_query = super().get_queryset()
-        data = base_query.filter(rating__gt=4) # django will automatically supply the correct set of the data once this is returned via the get_queryset function.
+        data = base_query.filter(rating__gt=1) # django will automatically supply the correct set of the data once this is returned via the get_queryset function.
         return data
 
     #by default, django will now take all the data that is associated with review, and pass it to that html, THATS LITERALLY IT! 
