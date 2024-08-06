@@ -64,8 +64,35 @@ class SingleReviewView(DetailView):
     model = Review # this works out of the box, despite the fact we have review in our html, django automatically takes whatever object it finds via the pk that we specified in urls.py, takes whatever we named our model,
     #make it lowercase, and then looks inside of the html and it works, despite the fact we never passed in any specific context to make that work.
     #using object within the html will also work. So object.rating will work just like review.rating. 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_favorite"] = True
+        loaded_review = self.object #special object here will give us access to that automatically loaded review. remember detail view gives us the object based on the primary key that is stated in the html and url.
+        request = self.request
+        favorite_id = request.session.get("favorite_review") # the below can fail if we are accessing session data that has not yet been set. the get method is basically a safer way to access the session data. 
+        #favorite_id = request.session["favorite_review"] # we set this value in the addFavoriteView.
+
+        context["is_favorite"] = favorite_id == str(loaded_review.id) # if favorite_id, essentially the users favorite review is equivalent to whatever review we just loaded, then the value for key is_favorite continues to be true
+        return context  # we must convert load_review.id to a string because favorite_id is a string due to how session sets the variables.
 
     
+
+class AddFavoriteView(View): # generally dont store objcets in sessions. usually not json-serializable.
+    def post(self,request):
+        review_id = request.POST["review_id"] # "review_id" is coming from the html file inside of the input. within the input, which is what we are submitting. we put a name. that allows us to access the post request input.
+        request.session["favorite_review"] = review_id  #fav_review gets stored in session with the key "favorite_review". under the hood, the data is stored to the database. THIS ALWAYS GETS STORED AS A STRING EVEN IF ITS A NUMBER
+        #and this data will now always be accessible if the user sends requests to the server.
+        return HttpResponseRedirect("/reviews/" + review_id)
+    
+
+
+
+
+
+
+
+
+
 
 
 
